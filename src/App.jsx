@@ -12,6 +12,12 @@ function App() {
 
   // List of interests (including user-added)
   const [interests, setInterests] = useState([]);
+  const [age, setAge] = useState("");
+const [gender, setGender] = useState("");
+const [meetingTime, setMeetingTime] = useState("");
+const [meetingDate, setMeetingDate] = useState("");
+const [distance, setDistance] = useState("");
+
 
   // Example nearby users (mock data)
   const MOCK_USERS = [
@@ -41,6 +47,17 @@ function App() {
   // Save profile to localStorage
   const handleSubmit = (e) => {
     e.preventDefault();
+    const userData = {
+  interest,
+  age,
+  gender,
+  meetingTime,
+  meetingDate,
+  distance
+};
+
+localStorage.setItem("userProfile", JSON.stringify(userData));
+
     localStorage.setItem("offline-user", JSON.stringify(profile));
     alert("Profile saved!");
   };
@@ -57,12 +74,16 @@ function App() {
   };
 
   // Filter users by interest
-  const matches = profile.interest
-    ? MOCK_USERS.filter(
-        (user) =>
-          user.activity.toLowerCase() === profile.interest.toLowerCase()
-      )
-    : [];
+ const matches = profile.interest
+  ? MOCK_USERS.filter(
+      (user) =>
+        user.activity.toLowerCase() === profile.interest.toLowerCase() &&
+        user.distance <= 10 &&
+        (profile.gender ? user.gender === profile.gender : true) &&
+        (profile.age ? user.age === profile.age : true)
+    )
+  : [];
+
 
   return (
     <div
@@ -73,6 +94,39 @@ function App() {
 
       {/* Profile form */}
       <form onSubmit={handleSubmit}>
+        <input
+  type="number"
+  placeholder="Age"
+  value={age}
+  onChange={(e) => setAge(e.target.value)}
+/>
+
+<select value={gender} onChange={(e) => setGender(e.target.value)}>
+  <option value="">Select gender</option>
+  <option value="male">Male</option>
+  <option value="female">Female</option>
+  <option value="other">Other</option>
+</select>
+
+<input
+  type="time"
+  value={meetingTime}
+  onChange={(e) => setMeetingTime(e.target.value)}
+/>
+
+<input
+  type="date"
+  value={meetingDate}
+  onChange={(e) => setMeetingDate(e.target.value)}
+/>
+
+<input
+  type="number"
+  placeholder="Distance (km)"
+  value={distance}
+  onChange={(e) => setDistance(e.target.value)}
+/>
+
         <label>
           Name:
           <input
