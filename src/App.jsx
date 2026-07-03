@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { saveProfile, loadProfile } from "./services/db";
+
 
 function App() {
   // User profile data
@@ -18,6 +20,73 @@ const [meetingTime, setMeetingTime] = useState("");
 const [meetingDate, setMeetingDate] = useState("");
 const [distance, setDistance] = useState("");
 
+import { useState, useEffect } from "react";
+import "./App.css";
+import { saveProfile, loadProfile } from "./services/db";
+
+function App() {
+  // User profile data
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    date: "",
+    interest: "",
+  });
+
+  // Other states
+  const [interests, setInterests] = useState([]);
+  const [age, setAge] = useState("");
+  const [gender, setGender] = useState("");
+  const [meetingTime, setMeetingTime] = useState("");
+  const [meetingDate, setMeetingDate] = useState("");
+  const [distance, setDistance] = useState("");
+
+  // Load profile on startup
+  useEffect(() => {
+    loadProfile("user-1").then((data) => {
+      if (data) {
+        setProfile({
+          name: data.name,
+          email: data.email,
+          date: data.date,
+          interest: data.interest,
+        });
+        setAge(data.age);
+        setGender(data.gender);
+        setMeetingTime(data.meetingTime);
+        setMeetingDate(data.meetingDate);
+        setDistance(data.distance);
+      }
+    });
+  }, []);
+
+  // Save profile
+  const handleSaveProfile = async () => {
+    const profileData = {
+      id: "user-1",
+      name: profile.name,
+      email: profile.email,
+      date: profile.date,
+      interest: profile.interest,
+      age,
+      gender,
+      meetingTime,
+      meetingDate,
+      distance,
+    };
+    await saveProfile(profileData);
+  };
+
+  // JSX render
+  return (
+    <div>
+      {/* твой интерфейс */}
+      <button onClick={handleSaveProfile}>Сохранить профиль</button>
+    </div>
+  );
+}
+
+export default App;
 
   // Example nearby users (mock data)
   const MOCK_USERS = [
