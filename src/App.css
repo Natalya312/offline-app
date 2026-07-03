@@ -54,3 +54,21 @@ li {
   padding: 8px;
   border-radius: 6px;
 }
+ul {
+  list-style: none;
+  padding: 0;
+}
+
+li {
+  background: #f0f4ff;
+  margin: 6px 0;
+  padding: 10px;
+  border-radius: 6px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+button:hover {
+  background-color: #5b94e6;
+  transition: background-color 0.3s ease;
+}
+
