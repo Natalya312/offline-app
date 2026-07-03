@@ -1,85 +1,150 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import "./App.css";
 
 function App() {
-  const [events, setEvents] = useState([]);
-  const [title, setTitle] = useState("");
-  const [city, setCity] = useState("");
-  const [date, setDate] = useState("");
+  // User profile data
+  const [profile, setProfile] = useState({
+    name: "",
+    email: "",
+    date: "",
+    interest: "",
+  });
 
-  const addEvent = () => {
-    if (!title || !city || !date) return;
+  // List of interests (including user-added)
+  const [interests, setInterests] = useState([]);
 
-    setEvents([...events, { title, city, date }]);
+  // Example nearby users (mock data)
+  const MOCK_USERS = [
+    { id: 1, name: "Alex", activity: "volleyball", time: "now", distance: "300 m" },
+    { id: 2, name: " Anna", activity: "beer", time: "in 1 hour", distance: "500 m" },
+    { id: 3, name: "Igor", activity: "chess", time: "now", distance: "200 m" },
+    { id: 4, name: "Natalia", activity: "walk", time: "evening", distance: "1 km" },
+  ];
 
-    setTitle("");
-    setCity("");
-    setDate("");
+  // Load saved data on start
+  useEffect(() => {
+    const savedProfile = JSON.parse(localStorage.getItem("offline-user"));
+    const savedInterests = JSON.parse(localStorage.getItem("offline-interests"));
+
+    if (savedProfile) setProfile(savedProfile);
+    if (savedInterests) setInterests(savedInterests);
+  }, []);
+
+  // Handle form field changes
+  const handleChange = (e) => {
+    setProfile({
+      ...profile,
+      [e.target.name]: e.target.value,
+    });
   };
 
+  // Save profile to localStorage
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    localStorage.setItem("offline-user", JSON.stringify(profile));
+    alert("Profile saved!");
+  };
+
+  // Add new interest
+  const handleAddInterest = () => {
+    if (!profile.interest.trim()) return;
+
+    if (!interests.includes(profile.interest)) {
+      const updated = [...interests, profile.interest];
+      setInterests(updated);
+      localStorage.setItem("offline-interests", JSON.stringify(updated));
+    }
+  };
+
+  // Filter users by interest
+  const matches = profile.interest
+    ? MOCK_USERS.filter(
+        (user) =>
+          user.activity.toLowerCase() === profile.interest.toLowerCase()
+      )
+    : [];
+
   return (
-    <div style={{
-      minHeight: "100vh",
-      background: "#f5f5f5",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "center"
-    }}>
-      <div style={{
-        background: "white",
-        padding: 30,
-        borderRadius: 12,
-        width: 350,
-        boxShadow: "0 5px 20px rgba(0,0,0,0.1)"
-      }}>
-        <h2 style={{ textAlign: "center" }}>Offline Friends</h2>
+    <div
+      className="App"
+      style={{ maxWidth: "600px", margin: "0 auto", padding: "20px" }}
+    >
+      <h1>Offline — find people by interest</h1>
 
-        <input
-          placeholder="Событие"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          style={{ width: "100%", marginBottom: 10, padding: 8 }}
-        />
+      {/* Profile form */}
+      <form onSubmit={handleSubmit}>
+        <label>
+          Name:
+          <input
+            type="text"
+            name="name"
+            value={profile.name}
+            onChange={handleChange}
+            placeholder="Enter your name"
+          />
+        </label>
 
-        <input
-          placeholder="Город"
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          style={{ width: "100%", marginBottom: 10, padding: 8 }}
-        />
+        <label>
+          Email:
+          <input
+            type="email"
+            name="email"
+            value={profile.email}
+            onChange={handleChange}
+            placeholder="Enter your email"
+          />
+        </label>
 
-        <input
-          type="date"
-          value={date}
-          onChange={(e) => setDate(e.target.value)}
-          style={{ width: "100%", marginBottom: 10, padding: 8 }}
-        />
+        <label>
+          Date:
+          <input
+            type="date"
+            name="date"
+            value={profile.date}
+            onChange={handleChange}
+          />
+        </label>
 
-        <button
-          onClick={addEvent}
-          style={{
-            width: "100%",
-            padding: 10,
-            background: "black",
-            color: "white",
-            border: "none",
-            borderRadius: 6
-          }}
-        >
-          Создать
+        <label>
+          Add your interest:
+          <input
+            type="text"
+            name="interest"
+            value={profile.interest}
+            onChange={handleChange}
+            placeholder="Example: volleyball, chess, beer..."
+          />
+        </label>
+
+        <button type="button" onClick={handleAddInterest}>
+          Add interest
         </button>
 
-        <div style={{ marginTop: 20 }}>
-          {events.map((e, i) => (
-            <div key={i} style={{
-              padding: 10,
-              borderBottom: "1px solid #eee"
-            }}>
-              <b>{e.title}</b><br />
-              {e.city} — {e.date}
-            </div>
+        <button type="submit">Save profile</button>
+      </form>
+
+      {/* Interests list */}
+      <h2>My interests:</h2>
+      <ul>
+        {interests.length === 0 && <p>No interests yet</p>}
+        {interests.map((item, i) => (
+          <li key={i}>{item}</li>
+        ))}
+      </ul>
+
+      {/* Nearby people */}
+      <h2>People nearby with your interest:</h2>
+      {matches.length === 0 ? (
+        <p>No matches for this activity yet.</p>
+      ) : (
+        <ul>
+          {matches.map((user) => (
+            <li key={user.id}>
+              {user.name} — {user.time}, {user.distance}
+            </li>
           ))}
-        </div>
-      </div>
+        </ul>
+      )}
     </div>
   );
 }
