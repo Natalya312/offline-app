@@ -11,32 +11,30 @@ export default function Activities() {
 
   useEffect(() => {
     const savedEvents = localStorage.getItem("events");
-
-    if (savedEvents) {
-      setEvents(JSON.parse(savedEvents));
-    }
+    if (savedEvents) setEvents(JSON.parse(savedEvents));
   }, []);
 
-  const saveEvents = (updatedEvents) => {
+  function saveEvents(updatedEvents) {
     setEvents(updatedEvents);
     localStorage.setItem("events", JSON.stringify(updatedEvents));
-  };
+  }
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
+  function handleChange(e) {
+    setNewEvent({
+      ...newEvent,
+      [e.target.name]: e.target.value,
+    });
+  }
 
-    setNewEvent((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-  };
-
-  const createEvent = (e) => {
+  function createEvent(e) {
     e.preventDefault();
 
     const event = {
       id: Date.now(),
-      ...newEvent,
+      title: newEvent.title,
+      date: newEvent.date,
+      location: newEvent.location,
+      description: newEvent.description,
       participants: [],
     };
 
@@ -48,23 +46,19 @@ export default function Activities() {
       location: "",
       description: "",
     });
-  };
+  }
 
-  const confirmParticipation = (eventId) => {
+  function joinEvent(eventId) {
     const profile = JSON.parse(localStorage.getItem("profile"));
 
     if (!profile || !profile.name) {
-      alert("Please create profile first");
+      alert("Create profile first");
       return;
     }
 
     const updatedEvents = events.map((event) => {
       if (event.id === eventId) {
-        const alreadyJoined = event.participants.includes(profile.name);
-
-        if (alreadyJoined) {
-          return event;
-        }
+        if (event.participants.includes(profile.name)) return event;
 
         return {
           ...event,
@@ -76,7 +70,7 @@ export default function Activities() {
     });
 
     saveEvents(updatedEvents);
-  };
+  }
 
   return (
     <div style={{ padding: "20px" }}>
@@ -129,25 +123,17 @@ export default function Activities() {
       <hr />
 
       {events.map((event) => (
-        <div
-          key={event.id}
-          style={{
-            border: "1px solid #ccc",
-            padding: "15px",
-            marginBottom: "15px",
-            borderRadius: "8px",
-          }}
-        >
+        <div key={event.id}>
           <h3>{event.title}</h3>
-          <p>📅 {event.date}</p>
-          <p>📍 {event.location}</p>
+          <p>{event.date}</p>
+          <p>{event.location}</p>
           <p>{event.description}</p>
 
-          <button onClick={() => confirmParticipation(event.id)}>
+          <button onClick={() => joinEvent(event.id)}>
             I’m going
           </button>
 
-          <h4>Confirmed:</h4>
+          <p>Participants:</p>
 
           {event.participants.length === 0 ? (
             <p>No participants yet</p>
@@ -158,6 +144,8 @@ export default function Activities() {
               ))}
             </ul>
           )}
+
+          <hr />
         </div>
       ))}
     </div>
