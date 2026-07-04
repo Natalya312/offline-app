@@ -19,6 +19,7 @@ export default function App() {
         <Route path="/" element={<Profile />} />
         <Route path="/activities" element={<Activities />} />
         <Route path="/nearby" element={<PeopleNearby />} />
+      <Route path="/chat" element={<Chat />} />
       </Routes>
     </div>
   );
