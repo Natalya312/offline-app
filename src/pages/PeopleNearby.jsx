@@ -52,3 +52,30 @@ export default function PeopleNearby() {
             value={distanceFilter}
             onChange={(e) => setDistanceFilter(Number(e.target.value))}
             style={{ width: "60px", marginLeft: "10px" }}
+          />
+        </label>
+      </div>
+
+      {/* People list */}
+      <ul style={{ marginTop: "20px", listStyle: "none", padding: 0 }}>
+        {people.length > 0 ? (
+          people.map((p) => (
+            <li
+              key={p.name}
+              style={{
+                backgroundColor: "#f0f0f0",
+                padding: "10px",
+                marginBottom: "10px",
+                borderRadius: "6px",
+              }}
+            >
+              <strong>{p.name}</strong> — {p.activity} ({p.distance} km away)
+            </li>
+          ))
+        ) : (
+          <p>No people found nearby.</p>
+        )}
+      </ul>
+    </div>
+  );
+}
