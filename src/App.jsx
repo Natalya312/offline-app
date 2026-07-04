@@ -1,3 +1,4 @@
+import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
 import Profile from "./pages/Profile";
 import Activities from "./pages/Activities";
