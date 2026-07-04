@@ -49,8 +49,9 @@ export default function Activities() {
   }
 
   function joinEvent(eventId) {
-    const profile = JSON.parse(localStorage.getItem("profile"));
-
+   const profile = JSON.parse(
+  localStorage.getItem("offline_profile")
+);
     if (!profile || !profile.name) {
       alert("Create profile first");
       return;
