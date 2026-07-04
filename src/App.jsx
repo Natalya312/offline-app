@@ -3,6 +3,8 @@ import { Routes, Route, Link } from "react-router-dom";
 import Profile from "./pages/Profile";
 import Activities from "./pages/Activities";
 import PeopleNearby from "./pages/PeopleNearby";
+import Chat from "./pages/Chat";
+
 
 export default function App() {
   return (
