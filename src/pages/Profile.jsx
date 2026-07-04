@@ -1,95 +1,95 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 export default function Profile() {
   const [profile, setProfile] = useState({
     name: "",
     age: "",
-    activity: "",
+    city: "",
+    language: "en",
   });
+
+  useEffect(() => {
+    const savedProfile = localStorage.getItem("profile");
+
+    if (savedProfile) {
+      setProfile(JSON.parse(savedProfile));
+    }
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setProfile((prev) => ({ ...prev, [name]: value }));
+
+    setProfile((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("Profile saved:", profile);
-    alert("Profile saved successfully!");
+
+    localStorage.setItem("profile", JSON.stringify(profile));
+    alert("Profile saved!");
   };
 
   return (
     <div style={{ padding: "20px" }}>
       <h1>Your Profile</h1>
-      <p>Fill in your name, age, and preferred activity.</p>
 
-      <form onSubmit={handleSubmit} style={{ marginTop: "20px" }}>
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Name:
-            <input
-              type="text"
-              name="name"
-              value={profile.name}
-              onChange={handleChange}
-              style={{ marginLeft: "10px" }}
-              required
-            />
-          </label>
-        </div>
+      <form onSubmit={handleSubmit}>
+        <input
+          name="name"
+          placeholder="Name"
+          value={profile.name}
+          onChange={handleChange}
+          required
+        />
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Age:
-            <input
-              type="number"
-              name="age"
-              value={profile.age}
-              onChange={handleChange}
-              style={{ marginLeft: "10px", width: "60px" }}
-              required
-            />
-          </label>
-        </div>
+        <br /><br />
 
-        <div style={{ marginBottom: "10px" }}>
-          <label>
-            Preferred Activity:
-            <input
-              type="text"
-              name="activity"
-              value={profile.activity}
-              onChange={handleChange}
-              style={{ marginLeft: "10px" }}
-              required
-            />
-          </label>
-        </div>
+        <input
+          name="age"
+          type="number"
+          placeholder="Age"
+          value={profile.age}
+          onChange={handleChange}
+          required
+        />
 
-        <button
-          type="submit"
-          style={{
-            backgroundColor: "#4CAF50",
-            color: "white",
-            border: "none",
-            padding: "10px 15px",
-            borderRadius: "6px",
-            cursor: "pointer",
-          }}
+        <br /><br />
+
+        <input
+          name="city"
+          placeholder="City"
+          value={profile.city}
+          onChange={handleChange}
+          required
+        />
+
+        <br /><br />
+
+        <select
+          name="language"
+          value={profile.language}
+          onChange={handleChange}
         >
-          Save Profile
-        </button>
+          <option value="en">English</option>
+          <option value="de">Deutsch</option>
+        </select>
+
+        <br /><br />
+
+        <button type="submit">Save Profile</button>
       </form>
 
       {profile.name && (
         <div style={{ marginTop: "20px" }}>
-          <h3>Preview:</h3>
-          <p>
-            👤 {profile.name}, {profile.age} years old — loves {profile.activity}.
-          </p>
+          <h3>Preview</h3>
+          <p>👤 {profile.name}, {profile.age}</p>
+          <p>📍 {profile.city}</p>
+          <p>🌍 {profile.language}</p>
         </div>
       )}
     </div>
   );
 }
-
